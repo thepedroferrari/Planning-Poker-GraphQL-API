@@ -31,6 +31,7 @@
   "homepage": "https://github.com/thepedroferrari/planning-poker#readme",
   "dependencies": {
     "argon2": "^0.28.2",
+    "graphql-tag": "^2.12.4",
     "graphql-yoga": "^1.18.3",
     "mongodb": "^3.6.9",
     "ncp": "^2.0.0",
@@ -38,7 +39,6 @@
     "ts-node": "^10.0.0"
   },
   "devDependencies": {
-    "@types/graphql": "^14.5.0",
     "@types/jest": "^26.0.23",
     "@types/mongodb": "^3.6.18",
     "@types/node": "^15.12.4",
