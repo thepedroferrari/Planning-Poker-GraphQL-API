@@ -60,3 +60,5 @@ export type Session = {
   updatedAt: Date
   createdAt: Date
 }
+
+export type PushSubscriber = () => void

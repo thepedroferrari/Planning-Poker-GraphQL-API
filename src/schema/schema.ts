@@ -5,11 +5,19 @@ export const typeDefs = gql`
     id: ID!
     author: String!
     content: String
-    date: Int!
+    date: Float!
     vote: String
   }
 
   type Query {
+    messages: [Message!]
+  }
+
+  type Mutation {
+    postMessage(author: String!, content: String!, vote: String): ID!
+  }
+
+  type Subscription {
     messages: [Message!]
   }
 `
