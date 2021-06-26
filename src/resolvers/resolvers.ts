@@ -1,5 +1,5 @@
 import { GraphQLServer } from "graphql-yoga"
-import { Message } from "src/types"
+import { Message, PushSubscriber } from "src/types"
 
 const messages: Message[] = [
   {
@@ -96,8 +96,8 @@ const messages: Message[] = [
   },
 ]
 
-const subscribers: (() => void)[] = []
-const onMessagesUpdates = (fn: () => void) => subscribers.push(fn)
+const subscribers: PushSubscriber[] = []
+const onMessagesUpdates = (fn: PushSubscriber) => subscribers.push(fn)
 
 export const resolvers = {
   Query: {
