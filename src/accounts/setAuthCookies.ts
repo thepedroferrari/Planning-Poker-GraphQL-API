@@ -26,7 +26,7 @@ export const setAuthCookies = ({ response, refreshToken, accessToken }: SetCooki
       httpOnly: true,
     })
   } catch (error) {
-    console.log("Error setting up cookies", error)
+    console.error("Error setting up cookies", error)
     throw new Error(error)
   }
 }

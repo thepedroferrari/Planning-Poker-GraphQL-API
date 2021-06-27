@@ -16,7 +16,7 @@ export async function connectDb() {
 
     // Confirm connection
     await client.db("admin").command({ ping: 1 })
-    console.log("✅ Connected to MongoDB")
+    console.info("✅ Connected to MongoDB")
   } catch (e) {
     // close connection if issues found
     await client.close()

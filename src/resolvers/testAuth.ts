@@ -8,8 +8,6 @@ export const testAuth = async (request: Request, response: Response) => {
     const user = await getUserFromCookies(request, response)
     // Return user email if found, otherwise return false
 
-    console.log("USER", user)
-
     return user?._id
       ? {
           data: {

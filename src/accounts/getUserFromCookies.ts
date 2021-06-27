@@ -10,16 +10,12 @@ const { ObjectId } = mongodb
 export const getUserFromCookies = async (request: Request, response: Response) => {
   const { user } = await import("../models/user")
 
-  console.log("REQUEST:", request.cookies)
-
   try {
     // token exists?
     if (request.cookies?.accessToken) {
       const { accessToken } = request.cookies
       // decode access token
       const decodedAccessToken = jwt.verify(accessToken, JWT_SECRET)
-
-      console.log(decodedAccessToken)
       return user.findOne({
         _id: new ObjectId((decodedAccessToken as { userId: string })?.userId),
       })
