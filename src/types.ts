@@ -1,5 +1,7 @@
+import type { Request, Response } from "express"
+import { STATUS } from "./constants"
+
 export type User = {
-  username: string
   email: {
     address: string
     verified: boolean
@@ -14,9 +16,7 @@ export type UserAuth = {
   password: string
 }
 
-export type RegisterUser = UserAuth & {
-  username: string
-}
+export type RegisterUser = UserAuth
 
 export type CreateRoom = {
   name: string
@@ -28,22 +28,35 @@ export type Message = {
   author: string
   content?: string
   date: number
-  vote?: string
+  vote?: number
+  roomName: string
 }
 
-export type Room = CreateRoom & {
+type Votes = {
+  email: string
+  vote: number
+}
+
+type Topic = {
+  name: string
+  votes: Votes[]
+}
+
+export type Room = {
   _id: string
+  name: string
+  owner: string // user email
   messages: Message[]
-  uri: string
+  topics: Topic[]
 }
 
 export type SendMessage = Message & { roomName: string }
+
 export type RoomParams = Pick<Room, "name">
 
 export type LogUserIn = {
   userId: string
-  request: any // TODO: Fix
-  reply: any // TODO: Fix
+  response: Response
 }
 
 export type ConnectionInfo = {
@@ -55,10 +68,19 @@ export type Session = {
   sessionToken: string
   userId: string
   valid: boolean
-  ip: string
-  userAgent: string | undefined
   updatedAt: Date
   createdAt: Date
 }
 
 export type PushSubscriber = () => void
+
+export type RequestUserRoute = Request<{}, {}, UserAuth>
+
+export type ReturnMessage = {
+  status: STATUS
+  error?: {
+    field: string
+    message: string
+  }
+  user?: User
+}
