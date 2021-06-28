@@ -28,9 +28,14 @@ export const typeDefs = gql`
     lastUpdate: Float!
   }
 
+  type Email {
+    address: String!
+    verified: Boolean
+  }
+
   type User {
     id: ID!
-    email: String!
+    email: Email!
     password: String!
   }
 
@@ -52,7 +57,7 @@ export const typeDefs = gql`
     ): ID!
     postTopic(topicName: String!, roomName: String!, author: String!): ID!
 
-    registerUser(email: String!, password: String!): ReturnMessageData!
+    registerUser(email: String!, password: String!): RegisterUserData!
     createRoom(name: String!, owner: String!): ReturnMessageData!
   }
 
@@ -76,5 +81,14 @@ export const typeDefs = gql`
   }
   type ReturnMessageData {
     data: ReturnMessage
+  }
+
+  type RegisterUser {
+    status: String!
+    errors: [Error]
+    user: User
+  }
+  type RegisterUserData {
+    data: RegisterUser
   }
 `
