@@ -24,20 +24,20 @@ export type CreateRoom = {
 }
 
 export type Message = {
-  id: number
+  id: string
   author: string
   content?: string
   date: number
-  vote?: number
+  vote?: string
   roomName: string
 }
 
-type Votes = {
-  email: string
-  vote: number
+export type Votes = {
+  author: string
+  vote: string
 }
 
-type Topic = {
+export type Topic = {
   name: string
   votes: Votes[]
 }
@@ -48,6 +48,7 @@ export type Room = {
   owner: string // user email
   messages: Message[]
   topics: Topic[]
+  lastUpdate: number
 }
 
 export type SendMessage = Message & { roomName: string }
@@ -83,4 +84,10 @@ export type ReturnMessage = {
     message: string
   }
   user?: User
+}
+
+export type PostTopic = {
+  author: string
+  topicName: string
+  roomName: string
 }

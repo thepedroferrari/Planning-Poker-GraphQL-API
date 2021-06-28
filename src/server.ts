@@ -1,17 +1,19 @@
 import { ApolloServer, PubSub } from "apollo-server-express"
+import cookieParser from "cookie-parser"
 import cors from "cors"
 import express from "express"
 import session from "express-session"
-import cookieParser from "cookie-parser"
+import http from "http"
 import { connectDb } from "./db"
 import "./env"
+import { JWT_SECRET, ROOT_DOMAIN } from "./env"
 import { resolvers } from "./resolvers/resolvers"
 import { typeDefs } from "./schema/schema"
 import { cookieSettings } from "./settings/cookieSettings"
 import { corsSettigs } from "./settings/corsSettings"
 import { graphqlServerOptions } from "./settings/graphqlServerOptions"
-import { JWT_SECRET } from "./env"
 
+const PORT = graphqlServerOptions.port
 const pubsub = new PubSub()
 
 async function startApolloServer() {
@@ -35,11 +37,17 @@ async function startApolloServer() {
 
   server.applyMiddleware({ app })
 
-  await new Promise(() => {
-    app.listen(8000)
-    console.info(`🚀 Server ready at http://localhost:${graphqlServerOptions.port}${server.graphqlPath}`)
-  })
-  return { server, app }
+  const httpServer = http.createServer(app)
+  server.installSubscriptionHandlers(httpServer)
+
+  await new Promise((resolve) => httpServer.listen(PORT, resolve as () => void))
+  console.info(
+    `🚀 Server ready at https://${ROOT_DOMAIN}:${PORT}${server.graphqlPath}`,
+  )
+  console.info(
+    `🚀 Subscriptions ready at wss://${ROOT_DOMAIN}:${PORT}${server.subscriptionsPath}`,
+  )
+  return { server, app, httpServer }
 }
 
 connectDb().then(async () => {

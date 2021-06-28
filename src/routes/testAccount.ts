@@ -2,7 +2,10 @@ import type { Request, Response } from "express"
 import { getUserFromCookies } from "../accounts/getUserFromCookies"
 import { STATUS } from "../constants"
 
-export const testAccountRoute = async (request: Request, response: Response) => {
+export const testAccountRoute = async (
+  request: Request,
+  response: Response,
+) => {
   try {
     // Verify User login
     const user = await getUserFromCookies(request, response)

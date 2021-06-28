@@ -5,7 +5,10 @@ import { STATUS } from "../constants"
 import { RegisterUser } from "../types"
 import { validateRegister } from "../utils/validateRegister"
 
-export const authUserMutation = async ({ email, password }: RegisterUser, ctx: GraphQLServer["context"]) => {
+export const authUserMutation = async (
+  { email, password }: RegisterUser,
+  ctx: GraphQLServer["context"],
+) => {
   // Check for errors before doing unnecessary database requests
 
   if (!email || !password) {

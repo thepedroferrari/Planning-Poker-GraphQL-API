@@ -9,12 +9,23 @@ export const typeDefs = gql`
     vote: Float
     roomName: String!
   }
+  type Votes {
+    author: String!
+    vote: String!
+  }
+
+  type Topic {
+    name: String!
+    votes: [Votes]!
+  }
 
   type Room {
     id: ID!
     name: String!
     owner: String!
     messages: [Message!]
+    topics: [Topic]
+    lastUpdate: Float!
   }
 
   type User {
@@ -32,13 +43,20 @@ export const typeDefs = gql`
   type Mutation {
     authUser(email: String!, password: String!): ReturnMessageData!
     testAuth: ReturnMessageData!
-    postMessage(author: String!, content: String!, vote: String, roomName: String!): ID!
+    postMessage(
+      author: String!
+      content: String!
+      vote: String
+      roomName: String!
+    ): ID!
+    postTopic(topicName: String!, roomName: String!, author: String!): ID!
+
     registerUser(email: String!, password: String!): ReturnMessageData!
     createRoom(name: String!, owner: String!): ReturnMessageData!
   }
 
   type Subscription {
-    messages: [Message!]
+    # messages: [Message!]
     room(name: String!): Room
   }
 

@@ -9,14 +9,26 @@ type RoomSubscription = {
   channel: string
 }
 
-export const roomSubscription = async ({ onMessagesUpdates, ctx, args, channel }: RoomSubscription) => {
+export const roomSubscription = async ({
+  onMessagesUpdates,
+  ctx,
+  args,
+  channel,
+}: RoomSubscription) => {
   const { name } = args
   const { pubsub } = ctx
 
   const currentRoom = await findRoomByName(name)
 
-  onMessagesUpdates(() => pubsub.publish(channel, { room: currentRoom }))
-  setTimeout(() => pubsub.publish(channel, { room: currentRoom }), 0)
+  onMessagesUpdates(
+    async () => await pubsub.publish(channel, { room: currentRoom }),
+  )
 
-  return pubsub.asyncIterator(channel)
+  // we do this setTimeout so the first message gets sent as soon as you subscribe.
+  setTimeout(
+    async () => await pubsub.publish(channel, { room: currentRoom }),
+    0,
+  )
+
+  return await pubsub.asyncIterator(channel)
 }

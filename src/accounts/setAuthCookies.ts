@@ -7,7 +7,11 @@ type SetCookies = {
   accessToken: string
 }
 
-export const setAuthCookies = ({ response, refreshToken, accessToken }: SetCookies) => {
+export const setAuthCookies = ({
+  response,
+  refreshToken,
+  accessToken,
+}: SetCookies) => {
   const now = new Date()
   const refreshExpires = new Date(now.setDate(now.getDate() + 30))
 

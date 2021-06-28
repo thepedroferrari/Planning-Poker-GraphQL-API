@@ -7,7 +7,10 @@ import { refreshTokens } from "./refreshTokens"
 
 const { ObjectId } = mongodb
 
-export const getUserFromCookies = async (request: Request, response: Response) => {
+export const getUserFromCookies = async (
+  request: Request,
+  response: Response,
+) => {
   const { user } = await import("../models/user")
 
   try {
@@ -25,7 +28,8 @@ export const getUserFromCookies = async (request: Request, response: Response) =
       const { refreshToken } = request.cookies
       // decode refresh token
       const decodedRefreshToken = jwt.verify(refreshToken, JWT_SECRET)
-      const sessionToken = (decodedRefreshToken as { sessionToken: string }).sessionToken
+      const sessionToken = (decodedRefreshToken as { sessionToken: string })
+        .sessionToken
 
       const { session } = await import("../models/session")
 

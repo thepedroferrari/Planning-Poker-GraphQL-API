@@ -35,7 +35,10 @@ export const createRoomMutation = async ({ owner, name }: CreateRoom) => {
     return {
       data: {
         status: STATUS.FAILURE,
-        error: returnErrors("name", "A room with the same name already exists."),
+        error: returnErrors(
+          "name",
+          "A room with the same name already exists.",
+        ),
       },
     }
   } catch (e) {

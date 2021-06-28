@@ -10,7 +10,11 @@ export const authUser = async ({ email, password }: UserAuth) => {
     return { isAuth: false, userId: null }
   }
 
-  const isAuth = await argon2.verify(userData.password, password, argon2HashOptions)
+  const isAuth = await argon2.verify(
+    userData.password,
+    password,
+    argon2HashOptions,
+  )
 
   return { isAuth, userId: userData._id }
 }

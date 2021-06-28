@@ -10,14 +10,15 @@ export const registerUser = async ({ email, password }: RegisterUser) => {
     // store in DB
 
     const { user } = await import("../models/user")
-    const result: InsertOneWriteOpResult<User & { _id: string }> = await user.insertOne({
-      email: {
-        address: email,
-        verified: false,
-      },
-      password: hashedPassword,
-      registrationDate: Date.now(),
-    })
+    const result: InsertOneWriteOpResult<User & { _id: string }> =
+      await user.insertOne({
+        email: {
+          address: email,
+          verified: false,
+        },
+        password: hashedPassword,
+        registrationDate: Date.now(),
+      })
 
     // Return user from Database
 

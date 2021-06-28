@@ -2,6 +2,7 @@ import { findRoomByName } from "../utils/findRoomByName"
 import { updateRoom } from "../utils/updateRoom"
 import { Message, PushSubscriber, Room } from "../types"
 import { GraphQLServer } from "graphql-yoga"
+import { randomBytes } from "crypto"
 
 export const postMessage = async (
   { author, content, vote, roomName }: Omit<Message, "date" | "id">,
@@ -17,12 +18,29 @@ export const postMessage = async (
     }
 
     if (vote) {
-      // We should update the vote instead of the message
+      // mutating the original thing, we should cloneDeep this
+      const currentTopic = currentRoom.topics[currentRoom.topics.length - 1]
+      const hasAuthorVoted = currentTopic.votes.find(
+        (vote) => vote.author === author,
+      )
+
+      if (hasAuthorVoted) {
+        currentTopic.votes.forEach((entry) => {
+          if (entry.author === author) {
+            entry.vote = vote
+          }
+        })
+      } else {
+        currentTopic.votes.push({
+          author,
+          vote,
+        })
+      }
     }
 
     const { messages } = currentRoom
     const newMessage: Message = {
-      id: Date.now(),
+      id: `${Date.now().toString()}_${randomBytes(2).toString("base64")}`,
       author,
       date: Date.now(),
       content,
@@ -31,7 +49,11 @@ export const postMessage = async (
     }
 
     const newMessages: Message[] = [...messages, newMessage]
-    const newRoom: Room = { ...currentRoom, messages: newMessages }
+    const newRoom: Room = {
+      ...currentRoom,
+      messages: newMessages,
+      lastUpdate: Date.now(),
+    }
 
     await updateRoom(currentRoom, newRoom)
 
@@ -40,7 +62,7 @@ export const postMessage = async (
     subscribers.forEach((fn) => fn())
 
     const { pubsub } = ctx
-    pubsub.publish(channel, { room: currentRoom })
+    await pubsub.publish(channel, { room: currentRoom })
 
     return id
   } catch (e) {

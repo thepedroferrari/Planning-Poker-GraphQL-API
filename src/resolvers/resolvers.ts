@@ -1,6 +1,13 @@
 import { GraphQLServer } from "graphql-yoga"
 import { findRoomByName } from "../utils/findRoomByName"
-import { CreateRoom, Message, PushSubscriber, RegisterUser, Room } from "../types"
+import {
+  CreateRoom,
+  Message,
+  PushSubscriber,
+  RegisterUser,
+  Room,
+  PostTopic,
+} from "../types"
 import { postMessage } from "./postMessage"
 import { roomSubscription } from "./roomSubscription"
 import { registerUserMutation } from "./registerUserMutation"
@@ -8,6 +15,7 @@ import { createRoomMutation } from "./createRoomMutation"
 import { authUserMutation } from "./authUserMutation"
 import { testAuth } from "./testAuth"
 import { logoutQuery } from "./logoutQuery"
+import { postTopic } from "./postTopic"
 
 const NEW_MESSAGE = "NEW_MESSAGE"
 
@@ -111,11 +119,12 @@ const messages: Message[] = [
   // },
   {
     roomName: "Frontend",
-    id: 14,
+    id: "14",
     author: "Bender Bending Rodriguez",
     date: Date.now() + 1000000,
-    content: "My Story Is A Lot Like Yours, Only More Interesting 'Cause It Involves Robots.",
-    vote: 1,
+    content:
+      "My Story Is A Lot Like Yours, Only More Interesting 'Cause It Involves Robots.",
+    vote: "1",
   },
 ]
 
@@ -125,33 +134,72 @@ const onMessagesUpdates = (fn: PushSubscriber) => subscribers.push(fn)
 export const resolvers = {
   Query: {
     messages: () => messages,
-    logout: async (_: unknown, __: null, { req, res }: GraphQLServer["context"]) => await logoutQuery(req, res),
-    room: async (_: unknown, { name }: { name: string }) => await findRoomByName(name),
+    logout: async (
+      _: unknown,
+      __: null,
+      { req, res }: GraphQLServer["context"],
+    ) => await logoutQuery(req, res),
+    room: async (_: unknown, { name }: { name: string }) =>
+      await findRoomByName(name),
   },
   Mutation: {
-    authUser: async (_: unknown, { email, password }: RegisterUser, ctx: GraphQLServer["context"]) =>
-      await authUserMutation({ email, password }, ctx),
-    testAuth: async (_: unknown, __: null, { req, res }: GraphQLServer["context"]) => await testAuth(req, res),
-    postMessage: async (_: unknown, args: Omit<Message, "date" | "id">, ctx: GraphQLServer["context"]) =>
-      postMessage(args, subscribers, NEW_MESSAGE, ctx),
+    authUser: async (
+      _: unknown,
+      args: RegisterUser,
+      ctx: GraphQLServer["context"],
+    ) => await authUserMutation(args, ctx),
 
-    registerUser: async (_: unknown, { email, password }: RegisterUser) => registerUserMutation(email, password),
-    createRoom: async (_: unknown, { name, owner }: CreateRoom) => createRoomMutation({ name, owner }),
+    testAuth: async (
+      _: unknown,
+      __: null,
+      { req, res }: GraphQLServer["context"],
+    ) => await testAuth(req, res),
+
+    postMessage: async (
+      _: unknown,
+      args: Omit<Message, "date" | "id">,
+      ctx: GraphQLServer["context"],
+    ) => postMessage(args, subscribers, NEW_MESSAGE, ctx),
+
+    postTopic: async (
+      _: unknown,
+      args: PostTopic,
+      ctx: GraphQLServer["context"],
+    ) => postTopic(args, subscribers, NEW_MESSAGE, ctx),
+
+    registerUser: async (_: unknown, { email, password }: RegisterUser) =>
+      registerUserMutation(email, password),
+
+    createRoom: async (_: unknown, args: CreateRoom) =>
+      createRoomMutation(args),
   },
   Subscription: {
     room: {
-      subscribe: async (_parent: unknown, args: Pick<Room, "name">, ctx: GraphQLServer["context"]) =>
-        roomSubscription({ onMessagesUpdates, ctx, args, channel: NEW_MESSAGE }),
+      subscribe: async (
+        _parent: unknown,
+        args: Pick<Room, "name">,
+        ctx: GraphQLServer["context"],
+      ) =>
+        roomSubscription({
+          onMessagesUpdates,
+          ctx,
+          args,
+          channel: NEW_MESSAGE,
+        }),
     },
 
-    messages: {
-      subscribe: (_parent: unknown, _args: unknown, { pubsub }: GraphQLServer["context"]) => {
-        const channel = Math.random().toString(36).slice(2, 15)
-        onMessagesUpdates(() => pubsub.publish(channel, { messages }))
-        setTimeout(() => pubsub.publish(channel, { messages }), 0)
+    // messages: {
+    //   subscribe: (
+    //     _parent: unknown,
+    //     _args: unknown,
+    //     { pubsub }: GraphQLServer["context"],
+    //   ) => {
+    //     const channel = Math.random().toString(36).slice(2, 15)
+    //     onMessagesUpdates(() => pubsub.publish(channel, { messages }))
+    //     setTimeout(() => pubsub.publish(channel, { messages }), 0)
 
-        return pubsub.asyncIterator(channel)
-      },
-    },
+    //     return pubsub.asyncIterator(channel)
+    //   },
+    // },
   },
 }

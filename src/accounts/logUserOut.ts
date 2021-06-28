@@ -10,7 +10,8 @@ export const logUserOut = async (request: Request, response: Response) => {
 
       // decode refresh token
       const decodedRefreshToken = jwt.verify(refreshToken, JWT_SECRET)
-      const sessionToken = (decodedRefreshToken as { sessionToken: string }).sessionToken
+      const sessionToken = (decodedRefreshToken as { sessionToken: string })
+        .sessionToken
 
       const { session } = await import("../models/session")
 
@@ -24,7 +25,9 @@ export const logUserOut = async (request: Request, response: Response) => {
       domain: ROOT_DOMAIN,
       path: "/",
     }
-    response.clearCookie("refreshToken", cookieOptions).clearCookie("accessToken", cookieOptions)
+    response
+      .clearCookie("refreshToken", cookieOptions)
+      .clearCookie("accessToken", cookieOptions)
   } catch (e) {
     throw new Error(`Error logging out: ${e}`)
   }

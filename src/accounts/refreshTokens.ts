@@ -8,9 +8,16 @@ type RefreshTokens = {
   userId: string
 }
 
-export const refreshTokens = async ({ sessionToken, response, userId }: RefreshTokens) => {
+export const refreshTokens = async ({
+  sessionToken,
+  response,
+  userId,
+}: RefreshTokens) => {
   try {
-    const { accessToken, refreshToken } = await createTokens(sessionToken, userId)
+    const { accessToken, refreshToken } = await createTokens(
+      sessionToken,
+      userId,
+    )
     setAuthCookies({ response, accessToken, refreshToken })
   } catch (e) {
     throw new Error(`Error getting user from cookies: ${e}`)
