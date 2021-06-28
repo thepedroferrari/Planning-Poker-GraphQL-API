@@ -1,11 +1,17 @@
-import { CreateRoom } from "../types"
+import { CreateRoom, PushSubscriber } from "../types"
 import { createRoom } from "../accounts/createRoom"
 import { STATUS } from "../constants"
 import { findRoomByName } from "../utils/findRoomByName"
 import { findUserByEmail } from "../utils/findUserByEmail"
 import { returnErrors } from "../utils/returnErrors"
+import { GraphQLServer } from "graphql-yoga"
 
-export const createRoomMutation = async ({ owner, name }: CreateRoom) => {
+export const createRoomMutation = async (
+  { owner, name }: CreateRoom,
+  subscribers: PushSubscriber[],
+  channel: string,
+  ctx: GraphQLServer["context"],
+) => {
   try {
     // Double-check if user is registered
     const userData = await findUserByEmail(owner)
@@ -23,6 +29,11 @@ export const createRoomMutation = async ({ owner, name }: CreateRoom) => {
     if (roomData === null) {
       // Create room
       const room = await createRoom({ name, owner })
+
+      subscribers.forEach((fn) => fn())
+
+      const { pubsub } = ctx
+      await pubsub.publish(channel)
 
       return {
         data: {

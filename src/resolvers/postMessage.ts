@@ -57,7 +57,7 @@ export const postMessage = async (
 
     await updateRoom(currentRoom, newRoom)
 
-    const id = messages[messages.length - 1].id + 1
+    const id = messages.length + 1 + Date.now()
     messages.push(newMessage)
     subscribers.forEach((fn) => fn())
 

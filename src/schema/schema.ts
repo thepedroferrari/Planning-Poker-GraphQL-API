@@ -35,9 +35,10 @@ export const typeDefs = gql`
   }
 
   type Query {
-    messages: [Message!]
+    messages(name: String!): [Message!]
     logout: ReturnMessageData
     room(name: String!): Room!
+    allRooms: [Room!]
   }
 
   type Mutation {
@@ -58,6 +59,7 @@ export const typeDefs = gql`
   type Subscription {
     # messages: [Message!]
     room(name: String!): Room
+    allRooms: [Room]
   }
 
   type Error {
