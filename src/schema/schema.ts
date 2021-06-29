@@ -47,7 +47,7 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    authUser(email: String!, password: String!): ReturnMessageData!
+    authUser(email: String!, password: String!): UserAccountData!
     testAuth: ReturnMessageData!
     postMessage(
       author: String!
@@ -57,7 +57,7 @@ export const typeDefs = gql`
     ): ID!
     postTopic(topicName: String!, roomName: String!, author: String!): ID!
 
-    registerUser(email: String!, password: String!): RegisterUserData!
+    registerUser(email: String!, password: String!): UserAccountData!
     createRoom(name: String!, owner: String!): ReturnMessageData!
   }
 
@@ -83,12 +83,12 @@ export const typeDefs = gql`
     data: ReturnMessage
   }
 
-  type RegisterUser {
+  type UserAccount {
     status: String!
     errors: [Error]
     user: User
   }
-  type RegisterUserData {
-    data: RegisterUser
+  type UserAccountData {
+    data: UserAccount
   }
 `

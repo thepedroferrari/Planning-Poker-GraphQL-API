@@ -1,4 +1,5 @@
 import { GraphQLServer } from "graphql-yoga"
+import { findUserByEmail } from "../utils/findUserByEmail"
 import { authUser } from "../accounts/auth"
 import { logUserIn } from "../accounts/logUserIn"
 import { STATUS } from "../constants"
@@ -20,7 +21,7 @@ export const authUserMutation = async (
     }
   }
 
-  const hasErrors = await validateRegister(
+  const errors = await validateRegister(
     {
       email: email.toLowerCase(),
       password,
@@ -28,7 +29,14 @@ export const authUserMutation = async (
     "login",
   )
 
-  if (hasErrors.length > 0) return hasErrors
+  if (errors.length > 0) {
+    return {
+      data: {
+        status: STATUS.FAILURE,
+        errors,
+      },
+    }
+  }
 
   try {
     const { isAuth, userId } = await authUser({
@@ -38,17 +46,29 @@ export const authUserMutation = async (
 
     if (isAuth && userId) {
       await logUserIn({ userId, response: ctx.res })
+      const user = await findUserByEmail(email)
+
       return {
         data: {
           status: STATUS.SUCCESS,
           user: {
-            id: userId,
+            email: user.email,
           },
         },
       }
     }
 
-    return isAuth
+    return {
+      data: {
+        status: STATUS.FAILURE,
+        errors: [
+          {
+            field: "Unknown",
+            message: `isAuth is ${isAuth}`,
+          },
+        ],
+      },
+    }
   } catch (e) {
     return {
       data: {
