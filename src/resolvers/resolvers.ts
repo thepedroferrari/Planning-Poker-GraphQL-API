@@ -43,8 +43,8 @@ export const resolvers = {
     authUser: async (
       _: unknown,
       args: RegisterUser,
-      ctx: GraphQLServer["context"],
-    ) => await authUserMutation(args, ctx),
+      { res }: GraphQLServer["context"],
+    ) => await authUserMutation(args, res),
 
     testAuth: async (
       _: unknown,

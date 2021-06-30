@@ -17,8 +17,6 @@ export const allRoomsSubscription = async ({
   const { allRooms } = await import("../models/room")
   const rooms = await allRooms()
 
-  console.log(rooms)
-
   onMessagesUpdates(
     async () => await pubsub.publish(channel, { allRooms: rooms }),
   )

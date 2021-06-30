@@ -34,7 +34,7 @@ export type Message = {
 
 export type Votes = {
   author: string
-  vote: string
+  vote: number
 }
 
 export type Topic = {

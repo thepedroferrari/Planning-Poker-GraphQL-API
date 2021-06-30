@@ -11,7 +11,7 @@ export const typeDefs = gql`
   }
   type Votes {
     author: String!
-    vote: String!
+    vote: Float!
   }
 
   type Topic {
@@ -47,12 +47,12 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    authUser(email: String!, password: String!): UserAccountData!
+    authUser(email: String!, password: String!): UserAccountData
     testAuth: ReturnMessageData!
     postMessage(
       author: String!
       content: String!
-      vote: String
+      vote: Float
       roomName: String!
     ): ID!
     postTopic(topicName: String!, roomName: String!, author: String!): ID!

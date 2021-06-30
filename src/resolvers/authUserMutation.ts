@@ -1,22 +1,72 @@
-import { GraphQLServer } from "graphql-yoga"
-import { findUserByEmail } from "../utils/findUserByEmail"
+import type { Response } from "express"
 import { authUser } from "../accounts/auth"
 import { logUserIn } from "../accounts/logUserIn"
 import { STATUS } from "../constants"
 import { RegisterUser } from "../types"
+import { findUserByEmail } from "../utils/findUserByEmail"
 import { validateRegister } from "../utils/validateRegister"
 
 export const authUserMutation = async (
   { email, password }: RegisterUser,
-  ctx: GraphQLServer["context"],
+  res: Response,
 ) => {
   // Check for errors before doing unnecessary database requests
-
-  if (!email || !password) {
+  if (!res) {
     return {
       data: {
         status: STATUS.FAILURE,
-        errors: "We need email and password.",
+        errors: [
+          {
+            field: "none",
+            message: "CTX Not received.",
+          },
+        ],
+      },
+    }
+  }
+
+  if (!email && !password) {
+    return {
+      data: {
+        status: STATUS.FAILURE,
+        errors: [
+          {
+            field: "email",
+            message: "Email not provided.",
+          },
+          {
+            field: "password",
+            message: "Password not provided.",
+          },
+        ],
+      },
+    }
+  }
+
+  if (!email) {
+    return {
+      data: {
+        status: STATUS.FAILURE,
+        errors: [
+          {
+            field: "email",
+            message: "Email not provided.",
+          },
+        ],
+      },
+    }
+  }
+
+  if (!password) {
+    return {
+      data: {
+        status: STATUS.FAILURE,
+        errors: [
+          {
+            field: "password",
+            message: "Password not provided.",
+          },
+        ],
       },
     }
   }
@@ -45,12 +95,13 @@ export const authUserMutation = async (
     })
 
     if (isAuth && userId) {
-      await logUserIn({ userId, response: ctx.res })
+      await logUserIn({ userId, response: res })
       const user = await findUserByEmail(email)
 
       return {
         data: {
           status: STATUS.SUCCESS,
+          errors: [],
           user: {
             email: user.email,
           },
@@ -73,10 +124,12 @@ export const authUserMutation = async (
     return {
       data: {
         status: STATUS.FAILURE,
-        errors: {
-          field: e,
-          message: ctx.res,
-        },
+        errors: [
+          {
+            field: e,
+            message: res,
+          },
+        ],
       },
     }
   }
