@@ -10,6 +10,8 @@ export const corsSettigs: CorsOptions = {
     "https://pedroferrari.com",
     /\api.pedroferrari.com/,
     "https://api.pedroferrari.com",
+    /\planning-poker.pedroferrari.com/,
+    "https://planning-poker.pedroferrari.com",
   ],
   credentials: true,
 }
