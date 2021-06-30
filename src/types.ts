@@ -28,7 +28,7 @@ export type Message = {
   author: string
   content?: string
   date: number
-  vote?: string
+  vote?: number
   roomName: string
 }
 
