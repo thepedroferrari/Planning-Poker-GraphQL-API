@@ -22,6 +22,8 @@ async function startApolloServer() {
     typeDefs,
     resolvers,
     context: ({ req, res }) => ({ req, res, pubsub }),
+    introspection: true,
+    playground: true,
   })
 
   await server.start()
@@ -35,7 +37,7 @@ async function startApolloServer() {
   app.use(express.urlencoded({ extended: true }))
   app.use(express.json())
 
-  server.applyMiddleware({ app })
+  server.applyMiddleware({ app, cors: false })
 
   const httpServer = http.createServer(app)
   server.installSubscriptionHandlers(httpServer)
