@@ -1,5 +1,5 @@
 export const graphqlServerOptions = {
-  port: 8000,
+  port: process.env.PORT,
   endpoint: "/graphql",
   subscriptions: "/subscriptions",
 }

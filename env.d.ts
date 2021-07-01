@@ -7,6 +7,6 @@ declare namespace NodeJS {
     COOKIE_SECRET: string
     JWT_SECRET: string
     ROOT_DOMAIN: string
-    SERVER_PORT: string
+    PORT: string
   }
 }

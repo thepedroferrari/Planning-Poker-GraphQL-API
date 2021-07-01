@@ -15,5 +15,5 @@ export const {
   COOKIE_SECRET,
   JWT_SECRET,
   ROOT_DOMAIN,
-  SERVER_PORT,
+  PORT,
 } = <{ [key: string]: string }>process.env
